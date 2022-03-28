@@ -1,4 +1,4 @@
-    def findPathIncludingSourceByRecordID(self, startDsrcCode, startRecordId, endDsrcCode, endRecordId, maxDegree, excludedEntities, requiredDsrcs, response):
+    def findPathIncludingSourceByRecordIDV2(self, startDsrcCode, startRecordId, endDsrcCode, endRecordId, maxDegree, excludedEntities, requiredDsrcs, flags, response):
         # type: (str,str) -> str
         """ Find a path between two records in the system.
         Args:
@@ -9,6 +9,7 @@
             maxDegree: The maximum path length to search for
             excludedEntities: JSON document containing entities to exclude
             requiredDsrcs: JSON document containing data sources to require
+            flags: control flags
             response: A bytearray for returning the response document.
         """
 
@@ -21,9 +22,9 @@
         _requiredDsrcs = self.prepareStringArgument(requiredDsrcs)
         responseBuf = c_char_p(addressof(tls_var.buf))
         responseSize = c_size_t(tls_var.bufSize)
-        self._lib_handle.G2_findPathIncludingSourceByRecordID.restype = c_int
-        self._lib_handle.G2_findPathIncludingSourceByRecordID.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_int, c_char_p, c_char_p, POINTER(c_char_p), POINTER(c_size_t), self._resize_func_def]
-        ret_code = self._lib_handle.G2_findPathIncludingSourceByRecordID(_startDsrcCode, _startRecordId, _endDsrcCode, _endRecordId, maxDegree, _excludedEntities, _requiredDsrcs, pointer(responseBuf), pointer(responseSize), self._resize_func)
+        self._lib_handle.G2_findPathIncludingSourceByRecordID_V2.restype = c_int
+        self._lib_handle.G2_findPathIncludingSourceByRecordID_V2.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_int, c_char_p, c_char_p, c_longlong, POINTER(c_char_p), POINTER(c_size_t), self._resize_func_def]
+        ret_code = self._lib_handle.G2_findPathIncludingSourceByRecordID_V2(_startDsrcCode, _startRecordId, _endDsrcCode, _endRecordId, maxDegree, _excludedEntities, _requiredDsrcs, flags, pointer(responseBuf), pointer(responseSize), self._resize_func)
 
         if ret_code == -1:
             raise G2ModuleNotInitialized('G2Engine has not been successfully initialized')

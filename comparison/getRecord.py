@@ -1,9 +1,10 @@
-    def getRecord(self, dsrcCode, recordId, response):
+    def getRecordV2(self, dsrcCode, recordId, flags, response):
         # type: (str,str,bytearray) -> int
         """ Get the specified record
         Args:
             dataSourceCode: The data source for the observation.
             recordID: The ID for the record
+            flags: control flags.
             response: A bytearray for returning the response document; if an error occurred, an error response is stored here.
         """
 
@@ -12,8 +13,10 @@
         _recordId = self.prepareStringArgument(recordId)
         responseBuf = c_char_p(addressof(tls_var.buf))
         responseSize = c_size_t(tls_var.bufSize)
-        self._lib_handle.G2_getRecord.argtypes = [c_char_p, c_char_p, POINTER(c_char_p), POINTER(c_size_t), self._resize_func_def]
-        ret_code = self._lib_handle.G2_getRecord(_dsrcCode, _recordId, pointer(responseBuf), pointer(responseSize), self._resize_func)
+        self._lib_handle.G2_getRecord_V2.restype = c_int
+        self._lib_handle.G2_getRecord_V2.argtypes = [c_char_p, c_char_p, c_longlong, POINTER(c_char_p), POINTER(c_size_t), self._resize_func_def]
+        ret_code = self._lib_handle.G2_getRecord_V2(_dsrcCode, _recordId, flags, pointer(responseBuf), pointer(responseSize), self._resize_func)
+
         if ret_code == -1:
             raise G2ModuleNotInitialized('G2Engine has not been successfully initialized')
         elif ret_code < 0:
